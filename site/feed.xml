@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>The Tales of Isana</title>
+  <subtitle>Build notes, methodology and post-mortems from the ISANA lab.</subtitle>
+  <id>https://quantwhale.net/tales/index.html</id>
+  <updated>2026-08-08T00:00:00Z</updated>
+  <link rel="alternate" type="text/html" href="https://quantwhale.net/tales/index.html" />
+  <link rel="self" type="application/atom+xml" href="https://quantwhale.net/feed.xml" />
+  <author>
+    <name>ISANA</name>
+  </author>
+  <entry>
+    <title>The lab goes public</title>
+    <id>https://quantwhale.net/tales/the-lab-goes-public.html</id>
+    <updated>2026-08-08T00:00:00Z</updated>
+    <link rel="alternate" type="text/html" href="https://quantwhale.net/tales/the-lab-goes-public.html" />
+    <summary>What ISANA is, what it publishes on this site, and what it never will.</summary>
+  </entry>
+</feed>

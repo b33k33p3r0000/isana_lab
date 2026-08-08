@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-08-08T21:42:21.447135+00:00",
+  "as_of": "2026-08-07",
+  "lab": {
+    "mode": "paper",
+    "banner": "PAPER — verifies costs/execution/ops, NOT edge"
+  },
+  "track_record": {
+    "since_inception_pct": 0.29,
+    "day_pct": 0.11,
+    "realized_vol_pct": 1.97,
+    "max_drawdown_pct": -0.23,
+    "current_drawdown_pct": 0.0,
+    "cost_drag_pct": 0.06
+  },
+  "looks_budget": {
+    "used": 18,
+    "max": 30
+  },
+  "ops": {
+    "health": "degraded"
+  },
+  "chain": {
+    "entry": 1,
+    "day_hash": "5c2e1c5b7f6f8dc288fdc21a0e72db4fedacd5f7bd8b7623bd87595a2e266f45",
+    "prev_hash": null
+  }
+}

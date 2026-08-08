@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Tales of Isana — ISANA</title>
+<link rel="stylesheet" href="../assets/isana.css">
+<link rel="alternate" type="application/atom+xml" title="The Tales of Isana" href="../feed.xml">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--font-sans);font-size:var(--fs-body);line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--sp-6)}
+/* No hairline under the masthead (operator round 3): every page opens its
+   main content with the ONE vermilion exhibit rule — a second line under the
+   nav read as a double rule. */
+.masthead{display:flex;align-items:center;gap:var(--sp-5);flex-wrap:wrap;
+  padding:var(--sp-5) 0}
+.wordmark{margin:0;font-family:var(--font-sans);font-weight:var(--fw-semibold);
+  font-size:var(--fs-section);letter-spacing:0.3em;text-transform:uppercase;color:var(--ink)}
+/* The wordmark is the way back to the gate (M6 #4) — the door works both
+   ways. Ink, undecorated: the masthead spends no accent (manifest §5). */
+.wordmark a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.wordmark a:hover,.wordmark a:focus-visible{border-bottom-color:var(--hairline)}
+.nav{display:flex;gap:var(--sp-5);font-family:var(--font-mono);
+  font-size:var(--fs-kicker);text-transform:uppercase;letter-spacing:var(--tracking-kicker)}
+.nav .here{color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:3px}
+.nav .soon{color:var(--ink-3)}
+/* Chrome navigation is ink, not accent: the accent budget (manifest §5) buys
+   the seal, the active state and PROSE link color — not the masthead. */
+.nav a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent;
+  padding-bottom:3px}
+.nav a:hover,.nav a:focus-visible{color:var(--ink);border-bottom-color:var(--hairline)}
+.grow{flex:1 1 auto}
+/* Text-only control (operator visual round 2026-08-08): no box — the shape
+   cue (rule 9) is the underline on hover/focus. */
+.theme-toggle{font-family:var(--font-mono);font-size:var(--fs-kicker);
+  text-transform:uppercase;letter-spacing:var(--tracking-kicker);color:var(--ink-2);
+  background:none;border:none;padding:var(--sp-1) 0;cursor:pointer;
+  border-bottom:1px solid transparent}
+.theme-toggle:hover,.theme-toggle:focus-visible{color:var(--ink);
+  border-bottom-color:var(--hairline)}
+.theme-toggle[hidden]{display:none}
+.seal-slot{position:relative;width:30px;height:30px;flex:none}
+/* Vermilion on document chrome (operator visual round 2026-08-08, manifest
+   §13 amendment): section kickers render in the accent's readable tier, and
+   each page carries ONE .exhibit rule marking its main exhibit. Never on data
+   surfaces, never carrying P&L/status meaning. */
+.kicker{color:var(--vermilion-text)}
+.exhibit{border-top:2px solid var(--vermilion);padding-top:var(--sp-6)}
+/* Hint register (operator round 3): module explainers, captions and the
+   footer apparatus — quieter than body text, never competing with it. */
+.hint{font-size:13px;color:var(--ink-3);line-height:1.6}
+/* Footer (operator round 3): pushed well clear of the last module and set in
+   the hint register — legal apparatus, not reading matter. */
+.foot{border-top:1px solid var(--hairline);margin-top:calc(var(--sp-16) * 2);
+  padding:var(--sp-8) 0 var(--sp-16);color:var(--ink-3)}
+.stamp{font-family:var(--font-mono);font-size:var(--fs-kicker);text-transform:uppercase;
+  letter-spacing:var(--tracking-kicker);color:var(--ink-3)}
+.disclaimer{max-width:78ch;margin:var(--sp-4) 0}
+.colophon{font-family:var(--font-mono);font-size:var(--fs-kicker);color:var(--ink-3)}
+.foot-links{display:flex;gap:var(--sp-4);margin-top:var(--sp-5);align-items:center}
+.foot-links a{color:var(--ink-3);display:inline-flex}
+.foot-links a:hover,.foot-links a:focus-visible{color:var(--ink)}
+/* The colophon signature (manifest §5) — an inline slot, so the impression
+   can break the line the way a pressed stamp breaks a frame. */
+.colophon .seal-slot{display:inline-block;vertical-align:middle;margin-left:var(--sp-3)}
+@media (max-width:640px){.wordmark{letter-spacing:0.2em}.nav{gap:var(--sp-4)}}
+
+.tales-kicker{margin:var(--sp-10) 0 var(--sp-3)}
+.tales h1{font-size:calc(var(--fs-tales) * 1.9);line-height:1.18;margin:0 0 var(--sp-4)}
+.tales-dek{font-family:var(--font-sans);font-size:var(--fs-body);color:var(--ink-2);
+  margin:0 0 var(--sp-8);padding-bottom:var(--sp-5);border-bottom:1px solid var(--hairline)}
+.tales p{margin:0 0 var(--sp-5)}
+.tales h2{font-size:calc(var(--fs-tales) * 1.25);margin:var(--sp-10) 0 var(--sp-3)}
+.tales blockquote{margin:var(--sp-6) 0;padding-left:var(--sp-5);
+  border-left:1px solid var(--hairline);color:var(--ink-2)}
+.tales code{font-family:var(--font-mono);font-size:var(--fs-data)}
+.tales pre{overflow-x:auto;border:1px solid var(--hairline);border-radius:var(--radius);
+  padding:var(--sp-4);font-size:var(--fs-data)}
+.tales hr{border:0;border-top:1px solid var(--hairline);margin:var(--sp-10) 0}
+/* Prose links spend the third accent slot (manifest §5), underlined always —
+   color assists the affordance, it never carries it alone (C1). */
+.tales a{color:var(--vermilion-text);text-decoration:underline;text-underline-offset:3px}
+.register{list-style:none;margin:var(--sp-8) 0 0;padding:0}
+.entry{padding:var(--sp-5) 0;border-top:1px solid var(--hairline)}
+.entry-date{font-family:var(--font-mono);font-size:var(--fs-kicker);
+  letter-spacing:var(--tracking-kicker);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.entry-title{font-family:var(--font-serif);font-size:calc(var(--fs-tales) * 1.5);
+  font-weight:var(--fw-semibold);margin:var(--sp-2) 0 0;text-wrap:balance}
+.exhibit .tales-kicker{margin-top:0}
+.entry-title a{color:var(--ink);text-decoration:none;
+  border-bottom:1px solid var(--hairline)}
+.entry-title a:hover,.entry-title a:focus-visible{border-bottom-color:var(--ink)}
+.entry-dek{font-family:var(--font-serif);font-size:var(--fs-tales);color:var(--ink-2);
+  max-width:66ch;margin:var(--sp-2) 0 0}
+.register-empty{margin:var(--sp-10) 0;font-family:var(--font-mono);
+  font-size:var(--fs-data);color:var(--ink-2)}
+</style>
+<script>
+(function(){'use strict';
+var K='isana-theme',R=document.documentElement,M=['auto','light','dark'];
+function apply(v){if(v==='auto'){R.removeAttribute('data-theme');}else{R.setAttribute('data-theme',v);}}
+function read(){try{var v=localStorage.getItem(K);return M.indexOf(v)>0?v:'auto';}catch(e){return 'auto';}}
+var cur=read();apply(cur);
+function paint(b){b.textContent='Theme '+cur;b.setAttribute('aria-label','Theme: '+cur);}
+document.addEventListener('DOMContentLoaded',function(){
+var b=document.getElementById('theme-toggle');if(!b){return;}
+b.hidden=false;paint(b);
+b.addEventListener('click',function(){
+cur=M[(M.indexOf(cur)+1)%M.length];
+try{localStorage.setItem(K,cur);}catch(e){}
+apply(cur);paint(b);});});})();
+</script>
+</head>
+<body>
+<div class="maku" aria-hidden="true"></div>
+<div class="wrap">
+<header class="masthead"><p class="wordmark"><a href="../">ISANA</a></p><nav class="nav" aria-label="Sections"><a href="../ledger.html">LEDGER</a><span class="here" aria-current="page">TALES</span><a href="../graveyard.html">GRAVEYARD</a></nav><span class="grow"></span><button type="button" id="theme-toggle" class="theme-toggle" hidden>Theme auto</button><span class="seal-slot"><span class="hanko hanko-stick" style="--stamp-rot:-1.12deg" aria-hidden="true">勇</span></span></header>
+<main>
+<section class="exhibit">
+<p class="kicker tales-kicker">The Tales of Isana</p>
+<ol class="register"><li class="entry"><p class="entry-date">№ 001 · 2026-08-08</p><h2 class="entry-title"><a href="the-lab-goes-public.html">The lab goes public</a></h2><p class="entry-dek">What ISANA is, what it publishes on this site, and what it never will.</p></li></ol>
+</section>
+</main>
+<footer class="foot hint"><p class="stamp">Produced 2026-08-08T21:42:21.447135+00:00</p><p class="disclaimer">ISANA is operated by a private individual. It is not an investment firm, is not registered with the ČNB or any other regulator, and nothing here is offered or sold. Nothing on this site is investment advice or a personal recommendation, and nothing is an offer or solicitation to transact in any financial instrument. The track record shown is a PAPER (simulated) record: it verifies costs, execution and operations — not edge. Simulated results have inherent limitations and do not represent actual trading. Past performance is not indicative of future results.</p><p class="colophon">ISANA is operated by David Binko · david.binko@gmail.com</p><div class="foot-links"><a href="../feed.xml" title="Atom feed" aria-label="Atom feed"><svg viewBox="0 0 16 16" width="15" height="15" role="img" aria-hidden="true"><circle cx="3" cy="13" r="1.7" fill="currentColor"/><path d="M1.5 7.5a7 7 0 0 1 7 7M1.5 2.5a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a></div></footer>
+</div>
+</body>
+</html>
