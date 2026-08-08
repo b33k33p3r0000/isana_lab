@@ -1,0 +1,11 @@
+// Cloudflare Workers static-assets config — the git-connected build
+// (`npx wrangler deploy`) serves `site/` as-is; no build step, no code.
+// `site/` is mirrored daily from the lab's gated `data/public/` output.
+{
+  "name": "isana-lab",
+  "compatibility_date": "2026-08-08",
+  "assets": {
+    "directory": "./site",
+    "html_handling": "auto-trailing-slash"
+  }
+}
