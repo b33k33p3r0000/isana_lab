@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-08-08T22:32:59.990439+00:00",
+  "generated_utc": "2026-08-09T00:53:18.911271+00:00",
   "as_of": "2026-08-07",
   "lab": {
     "mode": "paper",
@@ -22,8 +22,8 @@
     "health": "degraded"
   },
   "chain": {
-    "entry": 1,
+    "entry": 2,
     "day_hash": "5c2e1c5b7f6f8dc288fdc21a0e72db4fedacd5f7bd8b7623bd87595a2e266f45",
-    "prev_hash": null
+    "prev_hash": "2138b948881292adeee39a84d05f874868669bd3a556751b41d31db035d6b1a8"
   }
 }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <!-- ISANA hanko sticker — isana_ds .hanko at 800px: vermilion #D9432F,
+       radius 2/30 of the box, glyph 17/30 of the box, resting -3° press.
+       Face 勇 is the M7 placeholder, as everywhere in the system. -->
+  <rect x="0" y="0" width="800" height="800" rx="53" fill="#D9432F"/>
+  <text x="400" y="572" text-anchor="middle"
+        font-family="Hiragino Mincho ProN, Yu Mincho, serif" font-size="453"
+        fill="#FFFFFF" transform="rotate(-3 400 400)">勇</text>
+</svg>
