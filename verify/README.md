@@ -33,6 +33,10 @@ Each check prints one `PASS` / `FAIL` line. The exit code is 0 when nothing fail
 2. **Payload hash** — the day's `h_pub` recomputed from the published bytes.
 3. **Cross-reference** — the `chain` block printed inside `status.json` names the same entry and day hash as the chain file does.
 
+The same three checks (plus a live witness cross-check) run in your browser
+at `/verify.html` on the site — this script is the offline, trust-nothing
+version of that page.
+
 ## The recipe, so you can write your own verifier
 
 Canonical bytes of any JSON object:

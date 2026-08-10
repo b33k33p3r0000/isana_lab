@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify — ISANA</title>
+<link rel="stylesheet" href="assets/isana.css">
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<script>
+"use strict";
+function canonicalize(text, dropKeys) {
+  var i = 0;
+  var drop = dropKeys || [];
+  function err(msg) { throw new Error("cannot canonicalize: " + msg + " at offset " + i); }
+  function ws() {
+    while (i < text.length) {
+      var c = text[i];
+      if (c === " " || c === "\t" || c === "\n" || c === "\r") { i++; } else { break; }
+    }
+  }
+  function lit(word) {
+    if (text.slice(i, i + word.length) !== word) { err("bad literal"); }
+    i += word.length;
+    return word;
+  }
+  function str() {
+    var start = i;
+    i++;
+    while (i < text.length) {
+      if (text[i] === "\\") { i += 2; continue; }
+      if (text[i] === '"') { i++; return text.slice(start, i); }
+      i++;
+    }
+    err("unterminated string");
+  }
+  function num() {
+    var start = i;
+    if (text[i] === "-") { i++; }
+    while (i < text.length && "0123456789+-.eE".indexOf(text[i]) !== -1) { i++; }
+    if (i === start) { err("bad value"); }
+    return text.slice(start, i);
+  }
+  function value(depth) {
+    ws();
+    if (i >= text.length) { err("unexpected end"); }
+    var c = text[i];
+    if (c === "{") { return obj(depth); }
+    if (c === "[") { return arr(depth); }
+    if (c === '"') { return str(); }
+    if (c === "t") { return lit("true"); }
+    if (c === "f") { return lit("false"); }
+    if (c === "n") { return lit("null"); }
+    return num();
+  }
+  function obj(depth) {
+    i++;
+    ws();
+    var members = [];
+    var seen = Object.create(null);
+    if (text[i] === "}") { i++; return "{}"; }
+    for (;;) {
+      ws();
+      if (text[i] !== '"') { err("expected key"); }
+      var rawKey = str();
+      var key = JSON.parse(rawKey);
+      for (var k = 0; k < key.length; k++) {
+        if (key.charCodeAt(k) < 32 || key.charCodeAt(k) > 126) {
+          err("non-ASCII key " + rawKey);
+        }
+      }
+      if (Object.prototype.hasOwnProperty.call(seen, key)) { err("duplicate key " + rawKey); }
+      seen[key] = true;
+      ws();
+      if (text[i] !== ":") { err("expected colon"); }
+      i++;
+      var v = value(depth + 1);
+      if (!(depth === 0 && drop.indexOf(key) !== -1)) {
+        members.push([key, rawKey + ":" + v]);
+      }
+      ws();
+      if (text[i] === ",") { i++; continue; }
+      if (text[i] === "}") { i++; break; }
+      err("expected comma or brace");
+    }
+    members.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
+    var parts = [];
+    for (var m = 0; m < members.length; m++) { parts.push(members[m][1]); }
+    return "{" + parts.join(",") + "}";
+  }
+  function arr(depth) {
+    i++;
+    ws();
+    if (text[i] === "]") { i++; return "[]"; }
+    var items = [];
+    for (;;) {
+      items.push(value(depth + 1));
+      ws();
+      if (text[i] === ",") { i++; continue; }
+      if (text[i] === "]") { i++; break; }
+      err("expected comma or bracket");
+    }
+    return "[" + items.join(",") + "]";
+  }
+  ws();
+  var out = value(0);
+  ws();
+  if (i !== text.length) { err("trailing content"); }
+  return out;
+}
+
+"use strict";
+var VOLATILE = ["generated_utc", "chain"];
+var WITNESS_CHAIN_URL = "https://raw.githubusercontent.com/b33k33p3r0000/isana_lab/main/site/chain.jsonl";
+var failed = false;
+
+function line(status, msg) {
+  if (status === "FAIL") { failed = true; }
+  var p = document.createElement("p");
+  var s = document.createElement("span");
+  s.className = "st st-" + status.toLowerCase();
+  s.textContent = status;
+  p.appendChild(s);
+  p.appendChild(document.createTextNode(" " + msg));
+  document.getElementById("results").appendChild(p);
+}
+
+function verdict(text) {
+  var p = document.createElement("p");
+  p.className = "verdict";
+  p.textContent = text;
+  document.getElementById("results").appendChild(p);
+}
+
+async function sha256hex(str) {
+  var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  var bytes = new Uint8Array(buf);
+  var out = "";
+  for (var i = 0; i < bytes.length; i++) { out += bytes[i].toString(16).padStart(2, "0"); }
+  return out;
+}
+
+async function fetchText(path) {
+  var r = await fetch(path, { cache: "no-store" });
+  if (!r.ok) { throw new Error("could not fetch " + path + " (HTTP " + r.status + ")"); }
+  return await r.text();
+}
+
+function chainLines(text) {
+  var out = [];
+  var lines = text.split("\n");
+  for (var i = 0; i < lines.length; i++) {
+    if (lines[i].trim() !== "") { out.push(lines[i]); }
+  }
+  return out;
+}
+
+async function checkLinkage(rawLines, records) {
+  var problems = [];
+  var prevEntry = 0;
+  var prevHash = null;
+  for (var i = 0; i < records.length; i++) {
+    var rec = records[i];
+    var where = "line " + (i + 1) + " (date " + (rec.date || "?") + ")";
+    var canon = canonicalize(rawLines[i], ["h_entry"]);
+    if (!Number.isInteger(rec.entry) || !/[{,]"entry":-?\d+[,}]/.test(canon)) { problems.push(where + ": entry is not an integer"); }
+    else if (i === 0 && rec.entry !== 1) { problems.push(where + ": chain starts at entry " + rec.entry + ", expected 1"); }
+    else if (rec.entry <= prevEntry) { problems.push(where + ": entry " + rec.entry + " does not increase past " + prevEntry); }
+    else { prevEntry = rec.entry; }
+    var expected = await sha256hex(canon);
+    if (rec.h_entry !== expected) { problems.push(where + ": h_entry does not match the record (expected " + expected + ")"); }
+    if ((rec.prev === undefined ? null : rec.prev) !== prevHash) { problems.push(where + ": prev does not match the previous record's h_entry"); }
+    prevHash = typeof rec.h_entry === "string" ? rec.h_entry : null;
+  }
+  var counted = records.length + " record" + (records.length === 1 ? "" : "s");
+  if (problems.length) {
+    line("FAIL", "chain linkage — " + counted + ", " + problems.length + " problem(s): " + problems.join("; "));
+    return;
+  }
+  line("PASS", "chain linkage — " + counted + ", entries 1.." + prevEntry);
+  for (var j = 0; j < records.length; j++) {
+    if (records[j].superseded) {
+      line("NOTE", "entry " + records[j].entry + " supersedes " + records[j].superseded +
+        " — a corrected day, published beside the original rather than over it");
+    }
+  }
+}
+
+async function run() {
+  document.getElementById("results").textContent = "";
+  var latest = null;
+  var chainText = null;
+  try {
+    chainText = await fetchText("chain.jsonl");
+    var rawLines = chainLines(chainText);
+    if (!rawLines.length) { throw new Error("chain.jsonl holds no records"); }
+    var records = [];
+    for (var i = 0; i < rawLines.length; i++) { records.push(JSON.parse(rawLines[i])); }
+    latest = records[records.length - 1];
+    await checkLinkage(rawLines, records);
+
+    var statusText = await fetchText("status.json");
+    var equityText = await fetchText("equity.json");
+    var computed = await sha256hex(
+      canonicalize(statusText, VOLATILE) + canonicalize(equityText, [])
+    );
+    var label = "h_pub " + (latest.date || "?") + " (entry " + (latest.entry || "?") + ")";
+    if (latest.h_pub === computed) {
+      line("PASS", label + " — recomputed from status.json + equity.json");
+    } else {
+      line("FAIL", label + " — recomputed " + computed + ", chained " + latest.h_pub);
+    }
+
+    var status = JSON.parse(statusText);
+    var block = status.chain;
+    if (!block || typeof block !== "object") {
+      line("FAIL", "cross-reference — status.json carries no chain block");
+    } else {
+      var problems = [];
+      if (block.day_hash !== latest.h_pub) { problems.push("day_hash " + block.day_hash + " != chained h_pub " + latest.h_pub); }
+      if (block.entry !== latest.entry) { problems.push("entry " + block.entry + " != chained entry " + latest.entry); }
+      if (problems.length) { line("FAIL", "cross-reference — " + problems.join("; ")); }
+      else {
+        line("PASS", "cross-reference — status.json names entry " + latest.entry +
+          " and day_hash " + String(latest.h_pub).slice(0, 16) + "…");
+      }
+    }
+  } catch (e) {
+    line("FAIL", String(e && e.message ? e.message : e) + " — nothing was verified");
+  }
+  verdict(failed ? "VERIFICATION FAILED." : "Verified: hashes are internally consistent.");
+
+  try {
+    var witnessText = await fetchText(WITNESS_CHAIN_URL);
+    if (chainText === null) {
+      line("NOTE", "witness cross-check — no site copy to compare against (the site fetch failed above)");
+    } else if (witnessText === chainText) {
+      line("PASS", "witness cross-check — site chain.jsonl matches the public witness repo byte-for-byte");
+    } else {
+      line("FAIL", "witness cross-check — site chain.jsonl differs from the witness repo; " +
+        "a deploy may be in flight — retry in a few minutes; a persistent mismatch is a real problem");
+    }
+  } catch (e2) {
+    line("NOTE", "witness cross-check — could not reach the witness copy (offline or rate-limited); not a failure");
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function () { run(); });
+} else {
+  run();
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--font-sans);font-size:var(--fs-body);line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:0 var(--sp-6)}
+/* No hairline under the masthead (operator round 3): every page opens its
+   main content with the ONE vermilion exhibit rule — a second line under the
+   nav read as a double rule. */
+.masthead{display:flex;align-items:center;gap:var(--sp-5);flex-wrap:wrap;
+  padding:var(--sp-5) 0}
+.wordmark{margin:0;font-family:var(--font-sans);font-weight:var(--fw-semibold);
+  font-size:var(--fs-section);letter-spacing:0.3em;text-transform:uppercase;color:var(--ink)}
+/* The wordmark is the way back to the gate (M6 #4) — the door works both
+   ways. Ink, undecorated: the masthead spends no accent (manifest §5). */
+.wordmark a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.wordmark a:hover,.wordmark a:focus-visible{border-bottom-color:var(--hairline)}
+.nav{display:flex;gap:var(--sp-5);font-family:var(--font-mono);
+  font-size:var(--fs-kicker);text-transform:uppercase;letter-spacing:var(--tracking-kicker)}
+.nav .here{color:var(--ink);border-bottom:1px solid var(--ink);padding-bottom:3px}
+.nav .soon{color:var(--ink-3)}
+/* Chrome navigation is ink, not accent: the accent budget (manifest §5) buys
+   the seal, the active state and PROSE link color — not the masthead. */
+.nav a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent;
+  padding-bottom:3px}
+.nav a:hover,.nav a:focus-visible{color:var(--ink);border-bottom-color:var(--hairline)}
+.grow{flex:1 1 auto}
+/* Text-only control (operator visual round 2026-08-08): no box — the shape
+   cue (rule 9) is the underline on hover/focus. */
+.theme-toggle{font-family:var(--font-mono);font-size:var(--fs-kicker);
+  text-transform:uppercase;letter-spacing:var(--tracking-kicker);color:var(--ink-2);
+  background:none;border:none;padding:var(--sp-1) 0;cursor:pointer;
+  border-bottom:1px solid transparent}
+.theme-toggle:hover,.theme-toggle:focus-visible{color:var(--ink);
+  border-bottom-color:var(--hairline)}
+.theme-toggle[hidden]{display:none}
+.seal-slot{position:relative;width:30px;height:30px;flex:none}
+/* Vermilion on document chrome (operator visual round 2026-08-08, manifest
+   §13 amendment): section kickers render in the accent's readable tier, and
+   each page carries ONE .exhibit rule marking its main exhibit. Never on data
+   surfaces, never carrying P&L/status meaning. */
+.kicker{color:var(--vermilion-text)}
+.exhibit{border-top:2px solid var(--vermilion);padding-top:var(--sp-6)}
+/* Hint register (operator round 3): module explainers, captions and the
+   footer apparatus — quieter than body text, never competing with it. */
+.hint{font-size:13px;color:var(--ink-3);line-height:1.6}
+/* Footer (operator round 3): pushed well clear of the last module and set in
+   the hint register — legal apparatus, not reading matter. */
+.foot{border-top:1px solid var(--hairline);margin-top:calc(var(--sp-16) * 2);
+  padding:var(--sp-8) 0 var(--sp-16);color:var(--ink-3)}
+.stamp{font-family:var(--font-mono);font-size:var(--fs-kicker);text-transform:uppercase;
+  letter-spacing:var(--tracking-kicker);color:var(--ink-3)}
+.disclaimer{max-width:78ch;margin:var(--sp-4) 0}
+.colophon{font-family:var(--font-mono);font-size:var(--fs-kicker);color:var(--ink-3)}
+/* The 勇魚 lockup (manifest §13 amendment 2, 2026-08-09 · M7): the inline
+   wordmark lockup narrows to THE COLOPHON ONLY — the etymology surfaces where
+   the work is signed, beside the signature impression, never in navigation
+   chrome. Mincho, because it is the written word and not UI. */
+.jp-lockup{font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:13px;color:var(--ink-2);letter-spacing:0.06em}
+.foot-links{display:flex;gap:var(--sp-4);margin-top:var(--sp-5);align-items:center}
+.foot-links a{color:var(--ink-3);display:inline-flex}
+.foot-links a:hover,.foot-links a:focus-visible{color:var(--ink)}
+/* The colophon signature (manifest §5) — an inline slot, so the impression
+   can break the line the way a pressed stamp breaks a frame. */
+.colophon .seal-slot{display:inline-block;vertical-align:middle;margin-left:var(--sp-3)}
+@media (max-width:640px){.wordmark{letter-spacing:0.2em}.nav{gap:var(--sp-4)}}
+
+.intro{margin:var(--sp-10) 0 var(--sp-8)}
+.intro .kicker{margin:0 0 var(--sp-3)}
+.note{max-width:74ch}
+.note h2{font-family:var(--font-sans);font-size:var(--fs-body);
+  font-weight:var(--fw-semibold);margin:var(--sp-8) 0 var(--sp-2)}
+.note p{margin:0}
+.checks{font-family:var(--font-mono);font-size:var(--fs-data);
+  margin:var(--sp-6) 0;max-width:74ch}
+.checks p{margin:0 0 var(--sp-1)}
+.checks .st{display:inline-block;min-width:4.5ch;font-weight:var(--fw-semibold)}
+.checks .st-pass{color:var(--st-good-text)}
+.checks .st-fail{color:var(--st-crit-text)}
+.checks .st-note{color:var(--ink-3)}
+.checks .verdict{margin-top:var(--sp-4);font-weight:var(--fw-semibold)}
+.note pre{font-family:var(--font-mono);font-size:var(--fs-data);
+  overflow-x:auto;margin:var(--sp-2) 0}
+/* Prose links spend the third accent slot (manifest §5), underlined always —
+   color assists the affordance, it never carries it alone (C1). The isana_ds
+   `.link` grammar, applied to descendant anchors exactly the way `tales.py`
+   applies it to `.tales a`; `:visited` is named so the anchors list can never
+   fall back to the UA's purple (operator preview round 2026-08-10). */
+.note a,.note a:visited{color:var(--vermilion-text);text-decoration:underline;
+  text-underline-offset:3px}
+</style>
+<script>
+(function(){'use strict';
+var K='isana-theme',R=document.documentElement,M=['auto','light','dark'];
+function apply(v){if(v==='auto'){R.removeAttribute('data-theme');}else{R.setAttribute('data-theme',v);}}
+function read(){try{var v=localStorage.getItem(K);return M.indexOf(v)>0?v:'auto';}catch(e){return 'auto';}}
+var cur=read();apply(cur);
+function paint(b){b.textContent='Theme '+cur;b.setAttribute('aria-label','Theme: '+cur);}
+document.addEventListener('DOMContentLoaded',function(){
+var b=document.getElementById('theme-toggle');if(!b){return;}
+b.hidden=false;paint(b);
+b.addEventListener('click',function(){
+cur=M[(M.indexOf(cur)+1)%M.length];
+try{localStorage.setItem(K,cur);}catch(e){}
+apply(cur);paint(b);});});})();
+</script>
+</head>
+<body>
+<div class="maku" aria-hidden="true"></div>
+<div class="wrap">
+<header class="masthead"><p class="wordmark"><a href="./">ISANA</a></p><nav class="nav" aria-label="Sections"><a href="ledger.html">LEDGER</a><a href="tales/index.html">TALES</a><a href="graveyard.html">GRAVEYARD</a><a href="archive/index.html">ARCHIVE</a></nav><span class="grow"></span><button type="button" id="theme-toggle" class="theme-toggle" hidden>Theme auto</button></header>
+<main>
+<section class="intro"><p class="kicker">Verify</p><p>Every number this site publishes is committed to an append-only hash chain. This page re-computes those hashes in your browser, from the same public files anyone can fetch, and reports whether they hold together.</p></section>
+<section class="checks exhibit" id="results" aria-live="polite"><p>Running checks… (JavaScript required — or use the offline script below.)</p></section>
+<section class="note"><p>Not verified here: that any published number is true, and that nothing was peeked at before it was published. See the anchors below — anchors prove a hash existed, unedited, at a time — not that a number is true, and not that we didn't peek (the no-peek claim rests on the vault-gate discipline and says so). Nothing more, and nothing less.</p><h2>Verify it yourself, offline</h2><p>Don't trust this page's JavaScript — it grades its own homework. Clone the witness repository and run the same checks offline with nothing but Python 3:</p><pre>git clone https://github.com/b33k33p3r0000/isana_lab
+cd isana_lab
+python3 verify/verify_chain.py</pre><h2>Anchors</h2><h2><a href="https://github.com/b33k33p3r0000/isana_lab/tree/main">The witness repository</a></h2><p>every publish day is a public git push; GH Archive ingests push times hourly, so the history is witnessed by a third party.</p><h2><a href="https://github.com/b33k33p3r0000/isana_lab/tree/main/proofs/ots">OpenTimestamps proofs</a></h2><p>pre-registration hashes anchored in Bitcoin; verify any proof with the ots client.</p><h2><a href="https://web.archive.org/web/*/https://quantwhale.net/status.json">Internet Archive snapshots</a></h2><p>independent dated copies of status.json — what this site claimed, witnessed by a third party.</p></section>
+</main>
+<footer class="foot hint"><p class="stamp">Produced 2026-08-10T06:31:47.433147+00:00</p><p class="disclaimer">ISANA is operated by a private individual. It is not an investment firm, is not registered with the ČNB or any other regulator, and nothing here is offered or sold. Nothing on this site is investment advice or a personal recommendation, and nothing is an offer or solicitation to transact in any financial instrument. The track record shown is a PAPER (simulated) record: it verifies costs, execution and operations — not edge. Simulated results have inherent limitations and do not represent actual trading. Past performance is not indicative of future results.</p><p class="colophon">ISANA is operated by David Binko · david.binko@gmail.com · <span class="jp-lockup">勇魚</span></p><div class="foot-links"><a href="feed.xml" title="Atom feed" aria-label="Atom feed"><svg viewBox="0 0 16 16" width="15" height="15" role="img" aria-hidden="true"><circle cx="3" cy="13" r="1.7" fill="currentColor"/><path d="M1.5 7.5a7 7 0 0 1 7 7M1.5 2.5a12 12 0 0 1 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a><a href="https://github.com/b33k33p3r0000/isana_lab" title="Witness repository" aria-label="GitHub — the witness repository"><svg viewBox="0 0 16 16" width="15" height="15" role="img" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a><a href="https://x.com/isana_lab" title="X" aria-label="X profile"><svg viewBox="0 0 24 24" width="14" height="14" role="img" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a><a href="verify.html">Verify</a><a href="privacy.html">Privacy</a></div></footer>
+</div>
+</body>
+</html>

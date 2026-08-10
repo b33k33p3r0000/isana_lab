@@ -631,7 +631,10 @@ table.data tbody tr:last-child td { border-bottom: none; }
    other data surface: on data surfaces the accent does not exist.
 
    Every value flows through var() — ZERO raw hex here (tests enforce).
-   Hairlines are the only ornament; no shadows, no gradients.
+   Hairlines are the only ornament; no gradients, and no shadow that fakes
+   depth (§3.9). The ONE `box-shadow` below is an inset border render — the
+   seal's conventional shubun frame, drawn inside the box so the impression's
+   own edge stays square with its field — not elevation.
    ──────────────────────────────────────────────────────────────── */
 
 /* ── Eyebrow — the mono kicker above a document masthead ────── */
@@ -658,8 +661,18 @@ a.link:focus-visible,
   outline-offset: 3px;
 }
 
-/* ── The seal (§5) — square vermilion field, N0-white glyph.
-      Face 勇 is a placeholder; final mark design is M7.
+/* ── The seal (§5) — SHUBUN (朱文): a vermilion glyph on a white field with
+      the conventional border. That is the register of chosen-name/gō seals and
+      the practical default of functioning Japanese seals today; hakubun
+      (white-on-vermilion, full-bleed) is retired (manifest amendment 2,
+      2026-08-09 · M7).
+      The face 勇 is FINAL, single and permanent — read as a one-character
+      motto seal (遊印/一字印: "courage", stamped on finished work), never a
+      name seal. It is "the seal", never "the stamp" (スタンプ is a different
+      register); the impression itself is an 印影.
+      The white field is `--n0-ground`, not `--card`: a real impression lives
+      on paper, so the paper travels with it onto dark surfaces, and on an N0
+      sheet the border is the seal's own edge.
       One impression per surface; dashboards and data surfaces NEVER. ── */
 .hanko {
   display: inline-flex;
@@ -670,8 +683,12 @@ a.link:focus-visible,
   font-size: 17px;
   line-height: 1;
   flex: none;
-  background: var(--vermilion);
-  color: var(--n0-ground);
+  background: var(--n0-ground);
+  color: var(--vermilion);
+  /* The conventional border, drawn inset so it never grows the box (a real
+     border would; the size tiers are the impression's diameter). 2px reads at
+     all three tiers. NOT elevation — see the header note. */
+  box-shadow: inset 0 0 0 2px var(--vermilion);
   border-radius: var(--radius);
   transform: rotate(-3deg);
   user-select: none;
@@ -689,6 +706,31 @@ a.link:focus-visible,
 .hanko-stick {
   position: absolute;
   transform: rotate(var(--stamp-rot, -3deg)) translate(var(--stamp-dx, 0), var(--stamp-dy, 0));
+}
+
+/* ── The Mark (§2 amendment 2, 2026-08-09 · M7) — the placard: 勇魚 set
+      vertically in mincho inside a thin frame, the Reiwa-placard / hyōsatsu /
+      tanzaku register. INK ONLY — it spends none of the accent budget, and it
+      is text, not illustration (§7 stays clean: no logo whale anywhere).
+      Division of labor: wordmark = the carrier · the Mark = the identity ·
+      the seal = the signature. Placement is identity surfaces only (Tales and
+      report title pages, About, OG/social images, print objects, the gate
+      crest) — never the masthead, never the favicon (the seal keeps the tab),
+      never sharing a surface block with the seal.
+      Deliberately UNSIZED: width/height/font-size are the caller's, because
+      the Mark's proportions are read against the surface it names. ── */
+.placard {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  background: var(--card);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  line-height: 1.06;
+  user-select: none;
 }
 
 /* ── The daily plate (§6) — absolute N0, both polarities identical.
