@@ -308,6 +308,16 @@
   padding: var(--sp-5);
 }
 
+/* ── Stack — the vertical rhythm inside a card / a page's main column.
+      Air between blocks, never inside tables (§3.2): this is the ONE
+      layout utility the data surface gets, and it spends its space on
+      the gaps a module body needs between its own pieces. ───────── */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
 /* ── Kicker — the mono uppercase module label; ordinals are derived
       from the registry, never hand-numbered (contract §2.2). ───── */
 .kicker {
@@ -541,6 +551,154 @@ table.data tbody tr:last-child td { border-bottom: none; }
 }
 .row:first-child { border-top: none; }
 .row .meta { color: var(--ink-2); white-space: nowrap; }
+
+/* ── Heatmap — THE P&L BOUNDED EXCEPTION (CHART_PRIMITIVES §6) ──
+      Red/green may touch a data surface only where the value is P&L-signed
+      and the sign is PRINTED in the cell: the Δ% is the data, the tint only
+      assists it (C1). Five buckets — strong/weak each side of a neutral
+      band — with fills derived from the DOT tier at §6's stepped alphas
+      (strong 32%, weak 14%, neutral = the card itself).
+
+      `color-mix` toward --card rather than an alpha channel: v3 ships no
+      channel-split token to feed rgba() with (deliberate — the ramp is
+      calibrated as hex), and mixing toward the surface keeps every tint
+      correct in BOTH polarities without a second declaration.
+
+      Bucket BOUNDARIES are the module's business (§6: ±0.5% / ±2% today,
+      stated in its caption); this layer owns only the five fills. ─── */
+.hm-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: var(--sp-1);
+}
+/* Column count lives HERE, never in the renderer: the module emits one flat
+   cell list in sector order and the grid wraps it (8 / 5 / 3 by width). */
+@media (max-width: 900px) { .hm-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (max-width: 560px) { .hm-grid { grid-template-columns: repeat(3, 1fr); } }
+.hm-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 60px;
+  padding: var(--sp-2);
+  /* Reserved: `.pending` below swaps this border's STYLE and COLOR, never its
+     width, so a pending cell is never a pixel taller than its grid row. */
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: var(--fs-kicker);
+}
+.hm-sym { color: var(--ink); font-weight: var(--fw-medium); }
+.hm-delta { color: var(--ink); font-variant-numeric: tabular-nums; }
+/* Cells are anchors into the watchlist row (zero JS: the anchor navigates).
+   The bucket class owns the fill, so the link must not repaint it, and the
+   hover/focus ring is an OUTLINE — it cannot disturb `.pending`'s border. */
+a.hm-cell { text-decoration: none; color: inherit; cursor: pointer; }
+a.hm-cell:hover { outline: 1px solid var(--hairline); }
+a.hm-cell:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+/* A symbol with NO collector wired. Deliberately NOT the neutral bucket: a
+   missing measurement must never look like a measured flat day. The dashed
+   border makes it a state you can see without reading the em-dash. */
+.hm-cell.pending {
+  background: var(--card);
+  color: var(--ink-2);
+  border-style: dashed;
+  border-color: var(--ink-3);
+}
+.hm-cell.pending .hm-sym,
+.hm-cell.pending .hm-delta { color: var(--ink-2); font-weight: var(--fw-regular); }
+/* The five bucket fills (§6). */
+.hm-strong-neg { background: color-mix(in srgb, var(--st-crit) 32%, var(--card)); }
+.hm-weak-neg   { background: color-mix(in srgb, var(--st-crit) 14%, var(--card)); }
+.hm-neutral    { background: var(--card); }
+.hm-weak-pos   { background: color-mix(in srgb, var(--st-good) 14%, var(--card)); }
+.hm-strong-pos { background: color-mix(in srgb, var(--st-good) 32%, var(--card)); }
+/* The key. Chips carry the SAME bucket classes as the cells, so a fill change
+   propagates to the legend for free; only the boundary TEXT is the module's.
+   This is a key, not a chart legend — §0.2's "no legend boxes" law governs
+   line/bar charts, which name their series at the data. */
+.hm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-kicker);
+}
+.hm-legend-lab {
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-kicker);
+  margin-right: var(--sp-1);
+}
+.hm-key {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.hm-key-pending {
+  background: var(--card);
+  border-style: dashed;
+  border-color: var(--ink-3);
+  color: var(--ink-2);
+}
+
+/* ── Collapsible section (MODULE_CONTRACT §2 — `collapsed`) ─────
+      Native <details>: no JS, keyboard-operable, screen-reader-legible. The
+      header group IS the <summary> (`summary.sum-head`), so the whole header
+      is the hit target. The chevron is a pseudo-element that flips on
+      `details[open]`: v2 shipped a `.chev-c`/`.chev-o` SPAN pair plus JS that
+      force-opened the element — a v3 page carries no script, so the state
+      lives in the selector instead of in markup. ─────────────── */
+details.sect > summary.sum-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  cursor: pointer;
+  list-style: none;
+}
+details.sect > summary.sum-head::-webkit-details-marker { display: none; }
+details.sect > summary.sum-head::marker { content: ""; }
+details.sect > summary.sum-head::before {
+  content: "\25B8"; /* ▸ closed */
+  color: var(--ink-3);
+  font-size: var(--fs-kicker);
+  flex: none;
+}
+details.sect[open] > summary.sum-head::before { content: "\25BE"; } /* ▾ open */
+/* The chevron leads, so the header group is the LAST child and must GROW —
+   as a bare flex item it sizes to fit-content, which collapses
+   `.kicker-ruled`'s trailing hairline to zero. */
+details.sect > summary.sum-head > :last-child { flex: 1 1 auto; min-width: 0; }
+/* States the SIZE of what is hidden — a bare chevron states nothing. Its
+   inverse (`.expanded-hint`) belongs to a section whose closed state already
+   shows content: it says what the second click does. */
+.collapsed-hint,
+.expanded-hint {
+  font-family: var(--font-mono);
+  font-size: var(--fs-kicker);
+  color: var(--ink-2);
+}
+details.sect[open] .collapsed-hint { display: none; }
+details.sect:not([open]) .expanded-hint { display: none; }
+
+/* ── Filtered-by-default section — the swap pair ────────────────
+      A section whose default view is a FILTERED subset with the full list one
+      click away. `details.sect.swap` carries the FULL list in its body; the
+      filtered view plus its own "+N hidden" line live in an IMMEDIATELY
+      FOLLOWING `.swap-closed` sibling, hidden once the details opens.
+      Sibling rather than nested because a closed <details> hides every
+      non-summary child — there is no way to keep part of its own body
+      visible. Zero JS: the toggle is the native element, and with scripting
+      off both states stay reachable. ─────────────────────────── */
+details.sect.swap[open] + .swap-closed { display: none; }
 
 /* ── Glance board (MODULE_CONTRACT §1) — the calm page, read from
       across the room. It never grows another table. ───────────── */

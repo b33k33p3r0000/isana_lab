@@ -136,7 +136,10 @@ def check_linkage(report: Report, records: list[dict[str, Any]]) -> None:
     for index, record in enumerate(records):
         where = f"line {index + 1} (date {record.get('date', '?')})"
         entry = record.get("entry")
-        if not isinstance(entry, int):
+        # `bool` is a subclass of `int`, so a JSON `true` would otherwise pass
+        # the type check and then pass `entry != 1` as well (True == 1). The
+        # page's JS mirror rejects it; so does this.
+        if not isinstance(entry, int) or isinstance(entry, bool):
             problems.append(f"{where}: entry is not an integer")
         elif index == 0 and entry != 1:
             problems.append(f"{where}: chain starts at entry {entry}, expected 1")
