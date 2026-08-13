@@ -768,14 +768,11 @@ details.sect.swap[open] + .swap-closed { display: none; }
   color: var(--ink-2);
 }
 
-/* ── Kujira-maku band — black/white blocks, the funeral curtain named
-      for the whale's back and belly (§7). HARD STOPS ONLY: this is a
-      stripe, not a gradient — no ramp exists between the blocks. ── */
-.maku {
-  height: 14px;
-  background: repeating-linear-gradient(90deg, var(--ink) 0 26px, var(--ground) 26px 52px);
-  border-bottom: 1px solid var(--ink);
-}
+/* The kujira-maku band lived here until BRAND_MANIFEST amendment 3
+   (2026-08-12) retired it from every surface: the chrome now opens with the
+   Mark's masthead, and a stripe beneath it reads as ornament (rule 8 —
+   hairlines are the only ornament). The narrative survives in §10; the band
+   does not come back. */
 
 /* ── Utility — mono owns every numeral; this keeps them in column. ── */
 .tabular { font-variant-numeric: tabular-nums; }
@@ -785,14 +782,18 @@ details.sect.swap[open] + .swap-closed { display: none; }
 
    THIS LAYER IS BRAND CHROME — the ONLY place vermilion may appear
    (BRAND_MANIFEST §3.3 + §5: the accent budget is seal motif + active
-   state + link color). NEVER import this layer into a dashboard or any
-   other data surface: on data surfaces the accent does not exist.
+   state + link color). Since amendment 3 (2026-08-12) the dashboard's
+   CHROME consumes this layer too — masthead, footer colophon, kickers:
+   the page grammar is one grammar, web and dashboard alike. What did NOT
+   change is the inside: DATA AND STATUS SURFACES NEVER — no module, chart,
+   table or status cell carries the seal, the Mark or the accent.
 
    Every value flows through var() — ZERO raw hex here (tests enforce).
    Hairlines are the only ornament; no gradients, and no shadow that fakes
-   depth (§3.9). The ONE `box-shadow` below is an inset border render — the
-   seal's conventional shubun frame, drawn inside the box so the impression's
-   own edge stays square with its field — not elevation.
+   depth (§3.9). The ONE `box-shadow` below that DRAWS is an inset border
+   render — the seal's conventional shubun frame, drawn inside the box so the
+   impression's own edge stays square with its field — not elevation. (The
+   dark-chrome seal sets it to `none`; the full-red register is frameless.)
    ──────────────────────────────────────────────────────────────── */
 
 /* ── Eyebrow — the mono kicker above a document masthead ────── */
@@ -854,6 +855,40 @@ a.link:focus-visible,
 .hanko-sm { width: 24px; height: 24px; font-size: 13px; }
 .hanko-lg { width: 38px; height: 38px; font-size: 21px; }
 
+/* ── The seal on DARK CHROME — manifest §5 dark-mode exception (amendment 3
+      addendum, operator 2026-08-12): on dark chrome the impression flips to
+      the FULL-RED form — a solid vermilion field with the glyph knocked out in
+      paper white and NO inset border (the full-bleed hakubun register). The
+      reason is optical, not doctrinal: the paper-white chip read too hard
+      against N1-dark — a lit tile rather than an impression. This is a BOUNDED
+      exception to the §5 polarity, not a reversal of amendment 2: light
+      surfaces keep shubun, and the FAVICON keeps shubun on every theme so tab
+      identity stays stable.
+
+      Both guard forms, per the core.css theme mechanics (4 blocks): dark by
+      system preference — opted out of by [data-theme="light"] — AND dark set
+      explicitly. VERIFIED unaffected by construction: the gate and the archive
+      posters render through `chrome.sheet_document`, which pins
+      data-theme="light" on the <html> ROOT, so neither guard can match inside
+      them and their N0 sheets keep the shubun impression the manifest gives
+      paper. That pin has to be at the root to do the work — this is a
+      descendant RULE, not an inherited token, so the nested
+      `<div data-theme="light">` plate wrappers alone would NOT reverse it;
+      today every seal in one of those wrappers sits under a light-pinned root
+      as well, so the two agree. ── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hanko {
+    background: var(--vermilion);
+    color: var(--n0-ground);   /* the paper, knocked out of the impression */
+    box-shadow: none;          /* full-bleed — hakubun carries no inset frame */
+  }
+}
+[data-theme="dark"] .hanko {
+  background: var(--vermilion);
+  color: var(--n0-ground);
+  box-shadow: none;
+}
+
 /* The PRESSED stamp — rotation and offset are seeded per artifact by the
    generator from the artifact's own seed (date / prereg hash), bounded to
    ±8° and to the colophon / corner zone (manifest §5, rule 14). A real
@@ -871,10 +906,13 @@ a.link:focus-visible,
       tanzaku register. INK ONLY — it spends none of the accent budget, and it
       is text, not illustration (§7 stays clean: no logo whale anywhere).
       Division of labor: wordmark = the carrier · the Mark = the identity ·
-      the seal = the signature. Placement is identity surfaces only (Tales and
+      the seal = the signature. Placement is identity surfaces (Tales and
       report title pages, About, OG/social images, print objects, the gate
-      crest) — never the masthead, never the favicon (the seal keeps the tab),
-      never sharing a surface block with the seal.
+      crest) AND — since amendment 3, 2026-08-12 — the masthead of every inner
+      surface, web and dashboard alike (`.mast-mark` below; the amendment-2
+      "never the masthead" clause is retired). Still never the favicon (the
+      seal keeps the tab), and never sharing a surface block with the seal:
+      the Mark opens the page, the seal closes it at the footer.
       Deliberately UNSIZED: width/height/font-size are the caller's, because
       the Mark's proportions are read against the surface it names. ── */
 .placard {
@@ -890,6 +928,111 @@ a.link:focus-visible,
   line-height: 1.06;
   user-select: none;
 }
+
+/* ── THE LOCKUP (§2 amendment-3 addendum, 2026-08-12 — the operator
+      calibration round, grounded by `2026-08-12-kanji-latin-pairing-research
+      .md`): the official logo. The Mark's placard exactly as locked, with the
+      Latin caption ISANA OUTSIDE and below the frame — one object, one name,
+      the same on every surface that carries a logo (masthead, gate crest, the
+      exported asset set). Latin NEVER enters the frame (zero precedent found
+      for it); the caption is the documented mincho↔serif pairing, caps and
+      letterspaced, scaled to the kanji glyph module.
+      --logo-h is the universal measure the page rhythm is keyed to: 120 px
+      placard + 8 px + 16 px caption = 144 px. Both measures sit on :root, NOT
+      on .mast, because a custom property inherits only DOWN from the element
+      that declares it and BOTH consumers are outside the masthead's subtree:
+      the footer spends --logo-h (2× of air, E2) and every .mast-indented
+      register spends --mast-indent (§8.9 — nested registers align to the menu
+      column). Declared on .mast they resolved to nothing, which is silent:
+      margin-left:0 and no rhythm, with no error anywhere. ── */
+:root {
+  --logo-h: 144px;
+  --mast-indent: calc(80px + var(--sp-4));
+}
+.lockup {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  flex: none;
+  color: inherit;
+  text-decoration: none;
+}
+/* The Mark is unsized by design (see .placard) — the lockup is the caller that
+   gives it proportions, and the only place they are pinned. Enlarged ~25% over
+   the first masthead round (64/96/27) and ROUNDED to clean values: the operator
+   ruling is that the masthead is deliberately the page's dominant element. */
+.lockup .placard {
+  width: 80px;
+  height: 120px;
+  font-size: 34px;
+  gap: 3px;
+}
+.lockup-caption {
+  margin-top: 8px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.25em;
+  /* Letterspacing is applied to the LAST letter too, so a centered caption
+     would sit half a space left of the frame's axis; the indent gives that
+     trailing space back to the left. */
+  text-indent: 0.25em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ── The masthead (§2 amendment 3, 2026-08-12) — the logo anchors every
+      inner surface: the lockup left, menu column beside it (the section rows
+      and the theme-toggle row; active page underlined; equal row heights).
+      The menu carries NO ISANA row since the addendum — the lockup says the
+      name, and a surface block says it once. The Mark opens the page; the seal
+      closes it at the footer — the two never share a block. Vertical rhythm
+      hangs off the logo (§9, edits E1/E2): 1× --logo-h below the masthead,
+      2× above the footer. --mast-indent is the menu column's left edge —
+      nested registers align to it. ── */
+.mast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  padding: var(--sp-6) 0 0;
+  margin-bottom: var(--logo-h);
+}
+.mast-mark { flex: none; color: inherit; text-decoration: none; }
+.mast-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-kicker);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-kicker);
+  line-height: 1.5;
+}
+.mast-menu a, .mast-menu .here, .mast-menu .mast-toggle {
+  display: inline-block;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+.mast-menu .here { color: var(--ink); border-bottom-color: var(--ink); }
+.mast-menu a:hover, .mast-menu a:focus-visible,
+.mast-menu .mast-toggle:hover, .mast-menu .mast-toggle:focus-visible {
+  color: var(--ink); border-bottom-color: var(--hairline);
+}
+/* (`.mast-name` — the menu's ISANA row — is RETIRED by the addendum: the
+   lockup's caption is the name, and it appears once per surface block.) */
+.mast-toggle {
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
+  background: none; border: none; border-bottom: 1px solid transparent;
+  padding: 0 0 1px; cursor: pointer; margin-top: var(--sp-2);
+}
+.mast-toggle[hidden] { display: none; }
+/* Nested registers (entry cards, plate lists) align to the menu column. */
+.mast-indented { margin-left: var(--mast-indent); }
+@media (max-width: 640px) { .mast-indented { margin-left: 0; } }
 
 /* ── The daily plate (§6) — absolute N0, both polarities identical.
       The plate is a print/poster artifact, not a UI surface, so it uses
