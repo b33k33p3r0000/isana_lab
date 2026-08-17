@@ -551,6 +551,17 @@ table.data tbody tr:last-child td { border-bottom: none; }
 }
 .row:first-child { border-top: none; }
 .row .meta { color: var(--ink-2); white-space: nowrap; }
+/* Narrow (t-20260816-34cd): nowrap meta + space-between squeezes the LABEL
+   column to min-content ("model · own scale" breaks one word per line).
+   On a phone the row wraps instead: a meta that no longer fits drops to its
+   own line, right-aligned, and the label line stays whole. (`flex: none` on
+   the label was tried first and reverted — a fills row's long timestamp
+   label then could not shrink at all and pushed the page into a sideways
+   scroll.) */
+@media (max-width: 560px) {
+  .row { flex-wrap: wrap; }
+  .row .meta { white-space: normal; margin-left: auto; text-align: right; }
+}
 
 /* ── Heatmap — THE P&L BOUNDED EXCEPTION (CHART_PRIMITIVES §6) ──
       Red/green may touch a data surface only where the value is P&L-signed
