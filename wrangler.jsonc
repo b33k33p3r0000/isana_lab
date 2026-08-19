@@ -1,8 +1,10 @@
 // Cloudflare Workers static-assets config — the git-connected build
 // (`npx wrangler deploy`) serves `site/` as-is; no build step, no code.
 // `site/` is mirrored daily from the lab's gated `data/public/` output.
-// Custom domains are declared here (cutover 2026-08-09, operator-approved):
-// the deploy attaches quantwhale.net + www and manages their DNS records.
+// Custom domains are declared here (isana.io cutover 2026-08-19, operator-approved;
+// quantwhale.net cutover 2026-08-09 superseded): the deploy attaches isana.io + www
+// and manages their DNS records. quantwhale.net now 301-redirects to isana.io via a
+// zone-level Single Redirect rule (placeholder AAAA 100:: records keep it proxied).
 {
   "name": "isana-lab",
   "compatibility_date": "2026-08-08",
@@ -11,7 +13,7 @@
     "html_handling": "auto-trailing-slash"
   },
   "routes": [
-    { "pattern": "quantwhale.net", "custom_domain": true },
-    { "pattern": "www.quantwhale.net", "custom_domain": true }
+    { "pattern": "isana.io", "custom_domain": true },
+    { "pattern": "www.isana.io", "custom_domain": true }
   ]
 }
