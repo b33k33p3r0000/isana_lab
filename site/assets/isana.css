@@ -878,23 +878,29 @@ a.link:focus-visible,
 
       Both guard forms, per the core.css theme mechanics (4 blocks): dark by
       system preference — opted out of by [data-theme="light"] — AND dark set
-      explicitly. VERIFIED unaffected by construction: the gate and the archive
-      posters render through `chrome.sheet_document`, which pins
-      data-theme="light" on the <html> ROOT, so neither guard can match inside
-      them and their N0 sheets keep the shubun impression the manifest gives
-      paper. That pin has to be at the root to do the work — this is a
-      descendant RULE, not an inherited token, so the nested
-      `<div data-theme="light">` plate wrappers alone would NOT reverse it;
-      today every seal in one of those wrappers sits under a light-pinned root
-      as well, so the two agree. ── */
+      explicitly. Each ALSO carries `:not([data-theme="light"] *)`, so ANY
+      light-pinned ancestor keeps its seal shubun, not only a light-pinned
+      document root (t-20260812-4966). The root pin was never the whole story:
+      this is a descendant RULE, not an inherited token, so a nested
+      `<div data-theme="light">` plate wrapper — the manifest's own way to keep
+      a paper artifact light on a dark page — used to hand its seal the
+      full-red form against paper white. It no longer can, at any depth. The
+      gate and the archive posters (rendered through `chrome.sheet_document`,
+      which pins data-theme="light" on the <html> ROOT) were already covered by
+      the root guard and are unaffected; the escape hatch is what makes the
+      wrapper case agree with them. A complex `:not()` argument is Selectors
+      L4 (Safari 16.4+, Chrome 88+, Firefox 84+); an engine too old to parse it
+      drops the whole rule and every seal stays shubun — the pre-addendum
+      polarity, i.e. it degrades to the manifest default, never to a broken
+      one. ── */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .hanko {
+  :root:not([data-theme="light"]) .hanko:not([data-theme="light"] *) {
     background: var(--vermilion);
     color: var(--n0-ground);   /* the paper, knocked out of the impression */
     box-shadow: none;          /* full-bleed — hakubun carries no inset frame */
   }
 }
-[data-theme="dark"] .hanko {
+[data-theme="dark"] .hanko:not([data-theme="light"] *) {
   background: var(--vermilion);
   color: var(--n0-ground);
   box-shadow: none;
