@@ -2,7 +2,7 @@
   <!-- ISANA tab mark — solid vermilion field #D9432F, full bleed, no glyph,
        no frame, no press (operator instruction 2026-08-19: "čistě červený
        čtverec"; supersedes the M7 shubun-impression favicon). The vermilion
-       is the seal fill (tokens.css --vermilion) — identical in both
+       is the seal fill (the tokens.css vermilion token) — identical in both
        polarities, so one artwork serves light and dark tabs. Asset file:
        raw hex is the artwork, not a token layer. Platform shaping (iOS
        touch-icon mask, browser tab corners) is left to the platform — the
