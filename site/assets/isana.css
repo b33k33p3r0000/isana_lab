@@ -42,15 +42,21 @@
   --hairline:      #E4E4E4;   /* the only ornament (§3.8)                      */
 
   /* ── Status · DOT tier (fills, ≥9px marks — never text) ───── */
-  /* C1: a status color NEVER ships alone. Always dot + label (contract §4). */
+  /* C1: a status color NEVER ships alone. Always dot + label (contract §4).
+     LADDER LAW (2026-08-25): a measurable level or ranked verdict rendered as a
+     mark uses good → warn → crit in that order; `info` is the fourth hue for
+     KNOWN states with no severity (categories, `new`) — never a rank, never a
+     link colour. Neutral (`--ink-3`) stays "no signal" and is not a tier. */
   --st-good:       #17A34A;
   --st-warn:       #B8801F;
   --st-crit:       #D24545;
+  --st-info:       #2F6FD6;
 
   /* ── Status · TEXT tier (contrast-calibrated for reading) ─── */
   --st-good-text:  #187C44;
   --st-warn-text:  #8F6418;
   --st-crit-text:  #C83232;
+  --st-info-text:  #1F5BB8;
 
   /* ── P&L aliases — resolve through the status text tier ───── */
   /* The sign is always printed by the content (contract §4); the color only
@@ -126,10 +132,12 @@
     --st-good:       #17A34A;
     --st-warn:       #C9911C;
     --st-crit:       #C84343;
+    --st-info:       #4F8FE8;
 
     --st-good-text:  #2FBF6B;
     --st-warn-text:  #D89A2B;
     --st-crit-text:  #EE5D5D;
+    --st-info-text:  #6EA8F5;
 
     /* --vermilion is mode-independent (#D9432F in both polarities) — it is
        defined once in :root and deliberately NOT re-declared here. */
@@ -149,10 +157,12 @@
   --st-good:       #17A34A;
   --st-warn:       #C9911C;
   --st-crit:       #C84343;
+  --st-info:       #4F8FE8;
 
   --st-good-text:  #2FBF6B;
   --st-warn-text:  #D89A2B;
   --st-crit-text:  #EE5D5D;
+  --st-info-text:  #6EA8F5;
 
   --vermilion-text:#E86048;
 }
@@ -171,10 +181,12 @@
   --st-good:       #17A34A;
   --st-warn:       #B8801F;
   --st-crit:       #D24545;
+  --st-info:       #2F6FD6;
 
   --st-good-text:  #187C44;
   --st-warn-text:  #8F6418;
   --st-crit-text:  #C83232;
+  --st-info-text:  #1F5BB8;
 
   --vermilion-text:#BC3521;
 }
@@ -456,6 +468,9 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .dot-good    { background: var(--st-good); }
 .dot-warn    { background: var(--st-warn); }
 .dot-crit    { background: var(--st-crit); }
+/* `info` — a KNOWN state with no severity (a category, `new`); never a rank,
+   never a link (spec 2026-08-25 §1.2). */
+.dot-info    { background: var(--st-info); }
 /* Unmapped status renders neutral — never a guessed color (v2 harness lesson). */
 .dot-neutral { background: var(--ink-3); }
 
@@ -489,10 +504,12 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .badge-good { color: var(--st-good-text); }
 .badge-warn { color: var(--st-warn-text); }
 .badge-crit { color: var(--st-crit-text); }
+.badge-info { color: var(--st-info-text); }
 /* A badge's own dot follows its text tier, so the pair reads as one mark. */
 .badge-good .dot { background: var(--st-good-text); }
 .badge-warn .dot { background: var(--st-warn-text); }
 .badge-crit .dot { background: var(--st-crit-text); }
+.badge-info .dot { background: var(--st-info-text); }
 
 /* ── P&L — the sign is PRINTED BY THE CONTENT ("+0.41%", "−2.4%").
       Color assists the sign; it never replaces it (C1, contract §4). ── */
@@ -807,16 +824,6 @@ details.sect.swap[open] + .swap-closed { display: none; }
    dark-chrome seal sets it to `none`; the full-red register is frameless.)
    ──────────────────────────────────────────────────────────────── */
 
-/* ── Eyebrow — the mono kicker above a document masthead ────── */
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: var(--fs-kicker);
-  font-weight: var(--fw-medium);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-kicker);
-  color: var(--ink-2);
-}
-
 /* ── Links — one of the three accent slots. Underlined always:
       color assists, it never carries the affordance alone (C1). ── */
 a.link,
@@ -873,8 +880,8 @@ a.link:focus-visible,
       reason is optical, not doctrinal: the paper-white chip read too hard
       against N1-dark — a lit tile rather than an impression. This is a BOUNDED
       exception to the §5 polarity, not a reversal of amendment 2: light
-      surfaces keep shubun, and the FAVICON keeps shubun on every theme so tab
-      identity stays stable.
+      surfaces keep shubun. The favicon carries no seal at all any more — it is
+      a solid vermilion field (manifest §13, 2026-08-19).
 
       Both guard forms, per the core.css theme mechanics (4 blocks): dark by
       system preference — opted out of by [data-theme="light"] — AND dark set

@@ -24,4 +24,4 @@ ISANA is operated by a private individual. It is not an investment firm, is not 
 
 ---
 
-ISANA is operated by David Binko · david.binko@gmail.com
+ISANA is operated by b33k33p3r · hello@isana.io
