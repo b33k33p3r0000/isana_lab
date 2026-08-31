@@ -81,9 +81,11 @@ body{margin:0;background:var(--ground);color:var(--ink);
   letter-spacing:var(--tracking-kicker);color:var(--ink-2);font-variant-numeric:tabular-nums}
 .entry-title{font-family:var(--font-serif);font-size:calc(var(--fs-tales) * 1.5);
   font-weight:var(--fw-semibold);margin:var(--sp-2) 0 0;text-wrap:balance}
-.entry-title a{color:var(--ink);text-decoration:none;
-  border-bottom:1px solid var(--hairline)}
-.entry-title a:hover,.entry-title a:focus-visible{border-bottom-color:var(--ink)}
+/* Underlined like the prose-link tier but in ink, not accent (operator ruling
+   2026-08-30): the register title is a link and says so at rest; hover/focus
+   answer with weight, the color stays the page's own. */
+.entry-title a{color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.entry-title a:hover,.entry-title a:focus-visible{text-decoration-thickness:2px}
 .entry-dek{font-family:var(--font-serif);font-size:var(--fs-tales);color:var(--ink-2);
   max-width:66ch;margin:var(--sp-2) 0 0}
 .register-empty{margin:var(--sp-10) 0;font-family:var(--font-mono);
