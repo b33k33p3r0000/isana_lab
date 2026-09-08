@@ -1,17 +1,16 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-07T06:31:23.282662+00:00",
-  "as_of": "2026-09-04",
+  "generated_utc": "2026-09-08T06:33:44.778584+00:00",
+  "as_of": "2026-09-07",
   "lab": {
     "mode": "paper",
     "banner": "PAPER — verifies costs/execution/ops, NOT edge"
   },
   "track_record": {
-    "since_inception_pct": 1.57,
-    "day_pct": -0.05,
-    "realized_vol_pct": 1.82,
+    "since_inception_pct": 1.72,
+    "realized_vol_pct": 1.81,
     "max_drawdown_pct": -0.23,
-    "current_drawdown_pct": -0.05,
+    "current_drawdown_pct": 0.0,
     "cost_drag_pct": 0.06
   },
   "looks_budget": {
@@ -22,8 +21,8 @@
     "health": "ok"
   },
   "chain": {
-    "entry": 31,
-    "day_hash": "4635a8fab1ed260db803ae330dd2aa91699b296b55d2bf739d30939de805c1d5",
-    "prev_hash": "97a28338f186d12449152fb698c23b2594347b6b6c193a1dcd0c2851a5f0f4be"
+    "entry": 32,
+    "day_hash": "5ac2ffd4738f7f3f65e6aea5522600472f0834438cdaaa8200c702559d884c8d",
+    "prev_hash": "aab33371735211fc5c3066ea94fcdb7b0998f9b194cace092a8b4c6e58686794"
   }
 }

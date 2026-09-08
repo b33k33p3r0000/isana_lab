@@ -47,6 +47,24 @@ body{margin:0;background:var(--ground);color:var(--ink);
 .plate-seal{position:absolute;width:30px;height:30px;
   right:calc(-1 * var(--sp-8));bottom:calc(-1 * var(--sp-2))}
 @media (max-width:640px){.plate-seal{right:calc(-1 * var(--sp-4))}}
+@media print{
+@page{size:A5;margin:10mm}
+html,body{background:var(--ground);color:var(--ink)}
+.gate,.sheet{min-height:0;display:block;padding:0}
+.gate-stack{width:100%}
+.gate .plate,.sheet .plate{margin:10mm;width:auto}
+.gate-crest,.plate-enter,.plate-key,.sheet-back,.sheet-grain{display:none}
+.plate{position:relative;box-shadow:none;page-break-inside:avoid}
+.plate-top{position:static}
+.plate::before,.plate::after,.plate-top::before,.plate-top::after{content:"";
+  position:absolute;width:6mm;height:6mm;border:0 solid var(--hairline)}
+.plate::before{top:-8mm;left:-8mm;border-right-width:1px;border-bottom-width:1px}
+.plate::after{top:-8mm;right:-8mm;border-left-width:1px;border-bottom-width:1px}
+.plate-top::before{bottom:-8mm;left:-8mm;border-right-width:1px;border-top-width:1px}
+.plate-top::after{bottom:-8mm;right:-8mm;border-left-width:1px;border-top-width:1px}
+.plate-seal,.hanko{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+/* closing brace alone on its line — the tests split the block here */
+}
 .key-levels{display:flex;flex-wrap:wrap;gap:var(--sp-4);
   margin:var(--sp-5) 0 var(--sp-4)}
 .key-level{flex:1 1 96px;min-width:88px;margin:0}
