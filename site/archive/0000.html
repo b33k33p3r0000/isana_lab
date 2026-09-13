@@ -63,7 +63,8 @@ html,body{background:var(--ground);color:var(--ink)}
 .plate-top::before{bottom:-8mm;left:-8mm;border-right-width:1px;border-top-width:1px}
 .plate-top::after{bottom:-8mm;right:-8mm;border-left-width:1px;border-top-width:1px}
 .plate-seal,.hanko{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-/* closing brace alone on its line — the tests split the block here */
+/* the block closes here; a nested at-rule above is fine — the test that reads
+   this block counts braces rather than splitting on the first closing one */
 }
 .key-levels{display:flex;flex-wrap:wrap;gap:var(--sp-4);
   margin:var(--sp-5) 0 var(--sp-4)}
