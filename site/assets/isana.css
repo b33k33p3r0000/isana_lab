@@ -37,7 +37,12 @@
   --ink-2:         #505050;   /* secondary text — THE TEXT FLOOR               */
   /* USAGE RULE — --ink-3 is NON-TEXT ONLY: hairline-adjacent marks, disabled
      glyphs, neutral dots. It does not meet the contrast floor for reading.
-     Every caption, label and micro-label uses --ink-2 or darker. */
+     Every caption, label and micro-label uses --ink-2 or darker.
+     Exception — the apparatus register: the public footer, stamp, colophon,
+     `.hint` captions and dashed register rows set text in `--ink-3` (operator
+     round 3: quieter than body text). Measured contrast 3.19 : 1 light /
+     3.94 : 1 dark on `--ground` — below the 4.5 : 1 text floor, accepted for
+     apparatus only. */
   --ink-3:         #8E8E8E;
   --hairline:      #E4E4E4;   /* the only ornament (§3.8)                      */
 
@@ -59,18 +64,21 @@
   --st-info-text:  #1F5BB8;
 
   /* ── P&L aliases — resolve through the status text tier ───── */
-  /* The sign is always printed by the content (contract §4); the color only
+  /* The sign is always printed by the content (contract §4) — except an exact
+     zero, which prints unsigned and takes no P&L class; the color only
      assists it. Aliases, so P&L and status can never drift apart. */
   --pos-text:      var(--st-good-text);
   --neg-text:      var(--st-crit-text);
 
   /* ── The accent — one seal, budgeted ──────────────────────── */
-  /* USAGE RULE (§3.3 / §5): vermilion is BRAND CHROME ONLY — masthead seal,
-     colophon stamp, poster legend margin, link color. It never appears on a
-     data surface (dashboard, tables, charts) and never encodes P&L or status.
-     Consumers: web/web.css only. product/product.css must not reference it. */
+  /* USAGE RULE (§3.3 / §5): vermilion is BRAND CHROME ONLY — colophon stamp
+     (the masthead door-mark is retired), poster legend margin, link color,
+     the public-page kicker. It never appears on a
+     data surface (modules, tables, charts) and never encodes P&L or status.
+     Consumers: web/web.css and the public renderers' page CSS (`public/chrome.py`
+     kicker, `tales.py` / `verify.py` links). product/product.css must not reference it. */
   --vermilion:     #D9432F;   /* the seal fill — identical in both polarities  */
-  --vermilion-text:#BC3521;   /* the readable tier (links, plate link)         */
+  --vermilion-text:#BC3521;   /* the readable tier (links, public kickers)     */
 
   /* ── Absolute N0 — posters / print / plate ONLY ───────────── */
   /* Mode-independent by definition: §8.1 keeps pure #000/#FFF out of the UI
@@ -372,7 +380,8 @@
 
 /* ── Honesty banner — "PAPER · verifies costs/execution/ops, NOT edge".
       A bordered mono chip: the disclosure is chrome, so it is quiet, but
-      it is always present on paper surfaces (§10 register). ────── */
+      it is present on the BOOK page and the public Ledger
+      (§10 register). ────── */
 .honesty {
   display: inline-block;
   font-family: var(--font-mono);
@@ -729,7 +738,7 @@ details.sect:not([open]) .expanded-hint { display: none; }
 details.sect.swap[open] + .swap-closed { display: none; }
 
 /* ── Glance board (MODULE_CONTRACT §1) — the calm page, read from
-      across the room. It never grows another table. ───────────── */
+      across the room. It grows exactly one table — the returns strip. ── */
 .glance-hero {
   text-align: center;
   padding: var(--sp-12) var(--sp-4) var(--sp-6);
@@ -811,8 +820,8 @@ details.sect.swap[open] + .swap-closed { display: none; }
    THIS LAYER IS BRAND CHROME — the ONLY place vermilion may appear
    (BRAND_MANIFEST §3.3 + §5: the accent budget is seal motif + active
    state + link color). Since amendment 3 (2026-08-12) the dashboard's
-   CHROME consumes this layer too — masthead, footer colophon, kickers:
-   the page grammar is one grammar, web and dashboard alike. What did NOT
+   CHROME consumes this layer too — masthead, footer colophon (kickers
+   stay neutral on the dashboard): the page grammar is one grammar, web and dashboard alike. What did NOT
    change is the inside: DATA AND STATUS SURFACES NEVER — no module, chart,
    table or status cell carries the seal, the Mark or the accent.
 
@@ -824,7 +833,9 @@ details.sect.swap[open] + .swap-closed { display: none; }
    dark-chrome seal sets it to `none`; the full-red register is frameless.)
    ──────────────────────────────────────────────────────────────── */
 
-/* ── Links — one of the three accent slots. Underlined always:
+/* ── Links — one of the three accent slots: PROSE links take the accent;
+      register and way-in links are ink with an underline or an ink rule
+      (manifest §5, dated note 2026-09-30). Underlined always:
       color assists, it never carries the affordance alone (C1). ── */
 a.link,
 .link {
@@ -850,7 +861,8 @@ a.link:focus-visible,
       The white field is `--n0-ground`, not `--card`: a real impression lives
       on paper, so the paper travels with it onto dark surfaces, and on an N0
       sheet the border is the seal's own edge.
-      One impression per surface; dashboards and data surfaces NEVER. ── */
+      One impression per surface; data and status surfaces NEVER (the
+      dashboard's footer colophon signs — amendment 3). ── */
 .hanko {
   display: inline-flex;
   align-items: center;
@@ -870,7 +882,7 @@ a.link:focus-visible,
   transform: rotate(-3deg);
   user-select: none;
 }
-.hanko-sm { width: 24px; height: 24px; font-size: 13px; }
+.hanko-sm { width: 24px; height: 24px; font-size: 13px; } /* a size tier, shipped; no live caller (queue 2026-09-30 Q10 (a)) */
 .hanko-lg { width: 38px; height: 38px; font-size: 21px; }
 
 /* ── The seal on DARK CHROME — manifest §5 dark-mode exception (amendment 3
@@ -883,23 +895,34 @@ a.link:focus-visible,
       surfaces keep shubun. The favicon carries no seal at all any more — it is
       a solid vermilion field (manifest §13, 2026-08-19).
 
-      Both guard forms, per the core.css theme mechanics (4 blocks): dark by
-      system preference — opted out of by [data-theme="light"] — AND dark set
-      explicitly. Each ALSO carries `:not([data-theme="light"] *)`, so ANY
-      light-pinned ancestor keeps its seal shubun, not only a light-pinned
-      document root (t-20260812-4966). The root pin was never the whole story:
-      this is a descendant RULE, not an inherited token, so a nested
-      `<div data-theme="light">` plate wrapper — the manifest's own way to keep
-      a paper artifact light on a dark page — used to hand its seal the
-      full-red form against paper white. It no longer can, at any depth. The
-      gate and the archive posters (rendered through `chrome.sheet_document`,
-      which pins data-theme="light" on the <html> ROOT) were already covered by
-      the root guard and are unaffected; the escape hatch is what makes the
-      wrapper case agree with them. A complex `:not()` argument is Selectors
-      L4 (Safari 16.4+, Chrome 88+, Firefox 84+); an engine too old to parse it
-      drops the whole rule and every seal stays shubun — the pre-addendum
-      polarity, i.e. it degrades to the manifest default, never to a broken
-      one. ── */
+      Both guard forms, per the core.css theme mechanics (4 blocks), and their
+      light escapes DIFFER on purpose:
+      · dark by SYSTEM PREFERENCE — `:root:not([data-theme="light"])` — carries
+        `:not([data-theme="light"] *)`: the media rule never paints a seal
+        that has a light-pinned ancestor (t-20260812-4966). This is a descendant RULE, not an
+        inherited token, so a nested `<div data-theme="light">` plate wrapper —
+        the manifest's own way to keep a paper artifact light on a dark page —
+        used to hand its seal the full-red form against paper white. An
+        explicit dark container closer to the seal is handled by the attribute
+        rule, whatever the root says (subject to the known limit below).
+      · dark set EXPLICITLY — `[data-theme="dark"]` — carries
+        `:not([data-theme="dark"] [data-theme="light"] *)`: only a light
+        container nested INSIDE a dark one keeps shubun. The wider escape also
+        matched a dark container under a light-pinned document root (every
+        card and every sheet pins light on <html>), so a dark half on a light
+        page kept its seal shubun on dark chrome — the opposite of the
+        exception above (queue 2026-09-30 Q11 (a)). Now that dark half flips,
+        and a light plate on a dark page still keeps shubun at any depth.
+      The gate and the archive posters (rendered through `chrome.sheet_document`,
+      which pins data-theme="light" on the <html> ROOT, with no dark container
+      inside) resolve to shubun under both guards. Known limit: where the
+      outer dark is set by attribute, a three-deep nesting dark › light › dark
+      keeps shubun (the inner dark sits inside a
+      light that sits inside a dark, so the escape matches); no live surface
+      nests that deep. A complex `:not()` argument is Selectors L4 (Safari
+      16.4+, Chrome 88+, Firefox 84+); an engine too old to parse it drops the
+      whole rule and every seal stays shubun — the pre-addendum polarity, i.e.
+      it degrades to the manifest default, never to a broken one. ── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .hanko:not([data-theme="light"] *) {
     background: var(--vermilion);
@@ -907,15 +930,16 @@ a.link:focus-visible,
     box-shadow: none;          /* full-bleed — hakubun carries no inset frame */
   }
 }
-[data-theme="dark"] .hanko:not([data-theme="light"] *) {
+[data-theme="dark"] .hanko:not([data-theme="dark"] [data-theme="light"] *) {
   background: var(--vermilion);
   color: var(--n0-ground);
   box-shadow: none;
 }
 
-/* The PRESSED stamp — rotation and offset are seeded per artifact by the
-   generator from the artifact's own seed (date / prereg hash), bounded to
-   ±8° and to the colophon / corner zone (manifest §5, rule 14). A real
+/* The PRESSED stamp — rotation is seeded per artifact by the generator
+   from the artifact's own seed (date / prereg hash), bounded to ±8°
+   (manifest §5, rule 14); the position is fixed per zone. The offset hooks
+   --stamp-dx / --stamp-dy exist, and no live renderer sets them. A real
    hanko never lands twice the same way. The impression MAY break the frame
    line of its box — that is the point; on print it never breaks the sheet
    edge. Set --stamp-rot / --stamp-dx / --stamp-dy inline per impression;
@@ -931,11 +955,11 @@ a.link:focus-visible,
       is text, not illustration (§7 stays clean: no logo whale anywhere).
       Division of labor: wordmark = the carrier · the Mark = the identity ·
       the seal = the signature. Placement is identity surfaces (Tales and
-      report title pages, About, OG/social images, print objects, the gate
+      report title pages, OG/social images, print objects, the gate
       crest) AND — since amendment 3, 2026-08-12 — the masthead of every inner
       surface, web and dashboard alike (`.mast-mark` below; the amendment-2
       "never the masthead" clause is retired). Still never the favicon (the
-      seal keeps the tab), and never sharing a surface block with the seal:
+      tab is a bare vermilion field, §13 2026-08-19), and never sharing a surface block with the seal:
       the Mark opens the page, the seal closes it at the footer.
       Deliberately UNSIZED: width/height/font-size are the caller's, because
       the Mark's proportions are read against the surface it names. ── */
@@ -1061,8 +1085,10 @@ a.link:focus-visible,
 /* ── The daily plate (§6) — absolute N0, both polarities identical.
       The plate is a print/poster artifact, not a UI surface, so it uses
       --n0-ink / --n0-ground rather than the N1 ladder. Wrap it in a
-      [data-theme="light"] container so its chrome (the plate link) keeps
-      the light vermilion tier even when the host page runs dark. ────── */
+      [data-theme="light"] container so its chrome keeps the light tier
+      (and its seal stays shubun) even when the host page runs dark. The
+      seal is the sheet's one vermilion: the gate prints its way in in ink
+      (`plate.py`, `.plate-enter`). ────── */
 .plate {
   position: relative; /* the anchor for .hanko-stick */
   background: var(--n0-ground);
@@ -1084,7 +1110,8 @@ a.link:focus-visible,
   border-bottom: 1px solid var(--n0-ink);
   padding-bottom: var(--sp-3);
 }
-/* Legend block: encoding line · stats line · seed line. Provenance is
+/* Legend block: [encoding line (posters) | logbook sentence (gate)] · stats
+   line · seed line. Provenance is
    printed on the artifact itself, never on a certificate beside it. */
 .plate-legend {
   font-family: var(--font-mono);
@@ -1094,17 +1121,10 @@ a.link:focus-visible,
   margin-top: var(--sp-6);
   padding-top: var(--sp-3);
 }
-/* The way in, printed INSIDE the frame below the legend ("Enter the ledger →").
-   The gate's single accent — the third accent slot. */
-.plate-link {
-  font-family: var(--font-mono);
-  font-size: var(--fs-kicker);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-kicker);
-  color: var(--vermilion-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
+/* The way in ("Enter the ledger →") is printed INSIDE the frame below the
+   legend in ink, not an accent — the seal already spent the sheet's one
+   vermilion. Its rule is page-local to the gate renderer (`plate.py`,
+   `.plate-enter`); this layer ships none. */
 
 /* ── The Tales — the serif reading column (§8.3: serif where reading
       is the job). 66ch keeps the measure in the editorial band. ──── */

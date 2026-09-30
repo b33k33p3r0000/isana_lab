@@ -1,13 +1,23 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-29T06:34:06.665251+00:00",
-  "tombstones": [],
-  "pending_count": 14,
-  "next_unlock": "2026-09-30",
-  "sealed": [
+  "generated_utc": "2026-09-30T06:32:16.636098+00:00",
+  "tombstones": [
     {
-      "unlocks": "2026-09-30"
-    },
+      "id": "VAR-0001",
+      "kind": "variant",
+      "epitaph": "Expiry-week long bias in equity-index futures, riding dealer hedge-unwind flow into expiration.",
+      "mechanism_class": "dealer hedging flow",
+      "family": "friction",
+      "asset_class": "equity index (2)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-02",
+      "dsr": 0.09,
+      "n_events": 209
+    }
+  ],
+  "pending_count": 13,
+  "next_unlock": "2026-10-01",
+  "sealed": [
     {
       "unlocks": "2026-10-01"
     },
