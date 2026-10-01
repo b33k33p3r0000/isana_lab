@@ -1,7 +1,19 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-09-30T06:32:16.636098+00:00",
+  "generated_utc": "2026-10-01T06:32:48.774968+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0002",
+      "kind": "variant",
+      "epitaph": "Fading idiosyncratic single-coin shocks against a crypto basket, betting on forced-flow reversal.",
+      "mechanism_class": "forced flow",
+      "family": "friction",
+      "asset_class": "crypto (6)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-03",
+      "dsr": 0.0,
+      "n_events": 962
+    },
     {
       "id": "VAR-0001",
       "kind": "variant",
@@ -15,12 +27,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 13,
-  "next_unlock": "2026-10-01",
+  "pending_count": 12,
+  "next_unlock": "2026-10-03",
   "sealed": [
-    {
-      "unlocks": "2026-10-01"
-    },
     {
       "unlocks": "2026-10-03"
     },
