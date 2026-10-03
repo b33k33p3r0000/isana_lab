@@ -1,7 +1,35 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-02T06:32:30.537067+00:00",
+  "generated_utc": "2026-10-03T06:33:16.613104+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0007",
+      "kind": "variant",
+      "epitaph": "Cross-sectional carry — ranking futures by curve slope, long backwardation against contango.",
+      "mechanism_class": "carry",
+      "family": "risk",
+      "asset_class": "commodities, FX, rates, equity index (33)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-05",
+      "stage": "stage1",
+      "reason": "fails DSR/null",
+      "dsr": 0.61,
+      "n_events": 10330
+    },
+    {
+      "id": "VAR-0006",
+      "kind": "variant",
+      "epitaph": "Time-series carry from the sign of the futures curve slope, traded per instrument.",
+      "mechanism_class": "carry",
+      "family": "risk",
+      "asset_class": "commodities, rates, FX (14)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-05",
+      "stage": "stage1",
+      "reason": "no gross edge",
+      "dsr": 0.01,
+      "n_events": 264
+    },
     {
       "id": "VAR-0002",
       "kind": "variant",
@@ -27,15 +55,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 12,
-  "next_unlock": "2026-10-03",
+  "pending_count": 10,
+  "next_unlock": "2026-10-04",
   "sealed": [
-    {
-      "unlocks": "2026-10-03"
-    },
-    {
-      "unlocks": "2026-10-03"
-    },
     {
       "unlocks": "2026-10-04"
     },
