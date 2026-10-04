@@ -1,7 +1,49 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-03T06:33:16.613104+00:00",
+  "generated_utc": "2026-10-04T06:30:30.808125+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0010",
+      "kind": "variant",
+      "epitaph": "Cross-sectional hedging pressure — ranking futures by commercial positioning.",
+      "mechanism_class": "carry",
+      "family": "risk",
+      "asset_class": "commodities (18)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-06",
+      "stage": "stage1",
+      "reason": "fails DSR/null",
+      "dsr": 0.85,
+      "n_events": 1233
+    },
+    {
+      "id": "VAR-0009",
+      "kind": "variant",
+      "epitaph": "Cross-sectional rank on realized skewness across a broad futures universe.",
+      "mechanism_class": "carry",
+      "family": "risk",
+      "asset_class": "commodities (18)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-06",
+      "stage": "stage1",
+      "reason": "fails DSR/null",
+      "dsr": 0.5,
+      "n_events": 1580
+    },
+    {
+      "id": "VAR-0008",
+      "kind": "variant",
+      "epitaph": "Cross-sectional basis momentum — ranking futures by the momentum of their basis.",
+      "mechanism_class": "carry",
+      "family": "risk",
+      "asset_class": "commodities (18)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-06",
+      "stage": "stage1",
+      "reason": "no gross edge",
+      "dsr": 0.16,
+      "n_events": 1803
+    },
     {
       "id": "VAR-0007",
       "kind": "variant",
@@ -55,18 +97,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 10,
-  "next_unlock": "2026-10-04",
+  "pending_count": 7,
+  "next_unlock": "2026-10-10",
   "sealed": [
-    {
-      "unlocks": "2026-10-04"
-    },
-    {
-      "unlocks": "2026-10-04"
-    },
-    {
-      "unlocks": "2026-10-04"
-    },
     {
       "unlocks": "2026-10-10"
     },
