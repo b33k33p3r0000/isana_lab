@@ -1,7 +1,21 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-09T06:32:42.949220+00:00",
+  "generated_utc": "2026-10-10T06:32:45.506965+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0012",
+      "kind": "variant",
+      "epitaph": "Cross-asset value composite — long cheap against rich on long-horizon reversion measures.",
+      "mechanism_class": "cross sectional dispersion",
+      "family": "risk",
+      "asset_class": "commodities, FX (25)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-12",
+      "stage": "stage1",
+      "reason": "fails DSR/null",
+      "dsr": 0.92,
+      "n_events": 2291
+    },
     {
       "id": "VAR-0010",
       "kind": "variant",
@@ -97,12 +111,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 7,
-  "next_unlock": "2026-10-10",
+  "pending_count": 6,
+  "next_unlock": "2026-10-19",
   "sealed": [
-    {
-      "unlocks": "2026-10-10"
-    },
     {
       "unlocks": "2026-10-19"
     },
