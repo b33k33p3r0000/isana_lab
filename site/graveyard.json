@@ -1,7 +1,32 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-18T06:30:17.726014+00:00",
+  "generated_utc": "2026-10-19T06:30:44.712847+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0013",
+      "kind": "variant",
+      "epitaph": "The value composite's second registration — killed by the Book-level out-of-sample read that closed the value family.",
+      "mechanism_class": "cross sectional dispersion",
+      "family": "risk",
+      "asset_class": "commodities, FX (25)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-21",
+      "stage": "book_read",
+      "reason": "closed by the Book-level out-of-sample read",
+      "n_events": 1829
+    },
+    {
+      "id": "BOOK-03",
+      "kind": "book",
+      "epitaph": "The value family's Book-level out-of-sample read: the signal reversed out of sample. The family closed.",
+      "family": "value",
+      "asset_class": "commodities, FX (25)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-21",
+      "stage": "book_read",
+      "reason": "the signal reversed out of sample",
+      "dsr": 0.0
+    },
     {
       "id": "VAR-0012",
       "kind": "variant",
@@ -111,15 +136,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 6,
-  "next_unlock": "2026-10-19",
+  "pending_count": 4,
+  "next_unlock": "2026-10-25",
   "sealed": [
-    {
-      "unlocks": "2026-10-19"
-    },
-    {
-      "unlocks": "2026-10-19"
-    },
     {
       "unlocks": "2026-10-25"
     },
