@@ -1,7 +1,22 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-24T06:33:44.837452+00:00",
+  "generated_utc": "2026-10-25T06:34:45.116002+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0014",
+      "kind": "variant",
+      "epitaph": "Cross-sectional 12–1 momentum across a broad futures universe.",
+      "mechanism_class": "risk premium trend",
+      "family": "risk",
+      "asset_class": "commodities, FX, rates, equity index (33)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-27",
+      "failure_class": "C1 · no signal",
+      "stage": "stage1",
+      "reason": "fails DSR bar",
+      "dsr": 0.5,
+      "n_events": 2793
+    },
     {
       "id": "VAR-0013",
       "kind": "variant",
@@ -136,12 +151,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 4,
-  "next_unlock": "2026-10-25",
+  "pending_count": 3,
+  "next_unlock": "2026-10-27",
   "sealed": [
-    {
-      "unlocks": "2026-10-25"
-    },
     {
       "unlocks": "2026-10-27"
     },
