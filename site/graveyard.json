@@ -1,7 +1,22 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-26T06:31:52.083609+00:00",
+  "generated_utc": "2026-10-27T06:32:05.746599+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0015",
+      "kind": "variant",
+      "epitaph": "Flight-to-quality basket conditioned on equity-stress days — long the havens when stress fires.",
+      "mechanism_class": "funding flow",
+      "family": "risk",
+      "asset_class": "FX, rates, commodities (5)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-29",
+      "failure_class": "C1 · no signal",
+      "stage": "stage1",
+      "reason": "fails DSR bar",
+      "dsr": 0.43,
+      "n_events": 688
+    },
     {
       "id": "VAR-0014",
       "kind": "variant",
@@ -151,12 +166,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 3,
-  "next_unlock": "2026-10-27",
+  "pending_count": 2,
+  "next_unlock": "2026-10-29",
   "sealed": [
-    {
-      "unlocks": "2026-10-27"
-    },
     {
       "unlocks": "2026-10-29"
     },
