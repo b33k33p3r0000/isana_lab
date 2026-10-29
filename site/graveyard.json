@@ -1,7 +1,22 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-10-28T06:30:34.869582+00:00",
+  "generated_utc": "2026-10-29T06:31:14.744278+00:00",
   "tombstones": [
+    {
+      "id": "VAR-0016",
+      "kind": "variant",
+      "epitaph": "A moving-average trend-confirmation gate over 12-month time-series momentum.",
+      "mechanism_class": "risk premium trend",
+      "family": "risk",
+      "asset_class": "commodities, rates, FX, equity index (16)",
+      "verdict": "NO-GO",
+      "verdict_date": "2026-07-31",
+      "failure_class": "C1 · no signal",
+      "stage": "stage1",
+      "reason": "fails DSR bar",
+      "dsr": 0.53,
+      "n_events": 981
+    },
     {
       "id": "VAR-0015",
       "kind": "variant",
@@ -166,12 +181,9 @@
       "n_events": 209
     }
   ],
-  "pending_count": 3,
-  "next_unlock": "2026-10-29",
+  "pending_count": 2,
+  "next_unlock": "2026-11-20",
   "sealed": [
-    {
-      "unlocks": "2026-10-29"
-    },
     {
       "unlocks": "2026-11-20"
     },
